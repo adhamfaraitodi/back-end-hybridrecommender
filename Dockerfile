@@ -12,6 +12,8 @@ RUN pip install uvicorn
 
 # Copy application code
 COPY . .
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
 
 # Expose port
 EXPOSE 8000
