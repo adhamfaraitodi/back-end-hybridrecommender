@@ -35,5 +35,5 @@ jobs:
         run: |
           docker run --env-file .env -d -p 8000:8000 yourdockerusername/fastapi-recommendation-system:latest
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}  # Ensure this secret is configured in your GitHub repository secrets
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
