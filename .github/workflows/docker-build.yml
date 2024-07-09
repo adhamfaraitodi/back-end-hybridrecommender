@@ -29,11 +29,11 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: yourdockerusername/fastapi-recommendation-system:latest
+          tags: adhamfaraitodi/fastapi-recommendation-system:latest
 
       - name: Run Docker container
         run: |
-          docker run --env-file .env -d -p 8000:8000 yourdockerusername/fastapi-recommendation-system:latest
+          docker run --env-file .env -d -p 8000:8000 adhamfaraitodi/fastapi-recommendation-system:latest
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 #adding context 
