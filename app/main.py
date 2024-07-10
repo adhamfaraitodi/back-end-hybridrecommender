@@ -30,6 +30,8 @@ class RecipeModel(BaseModel):
     recipe_id: int
     recipe_name: str
     image_url: str
+    ingredients: str
+    cooking_directions: str
 
 # Load and preprocess data from database
 def load_data(db: Session):
@@ -86,7 +88,13 @@ def get_recipe(recipe_id: int, db: Session = Depends(get_db)):
     recipe = db.query(Recipe).filter(Recipe.recipe_id == recipe_id).first()
     if not recipe:
         raise HTTPException(status_code=404, detail="Recipe not found")
-    return RecipeModel(recipe_id=recipe.recipe_id, recipe_name=recipe.recipe_name, image_url=recipe.image_url)
+    return RecipeModel(
+        recipe_id=recipe.recipe_id,
+        recipe_name=recipe.recipe_name,
+        image_url=recipe.image_url,
+        ingredients=recipe.ingredients,
+        cooking_directions=recipe.cooking_directions
+    )
 
 @app.get("/recommendations/", response_model=List[RecipeModel])
 def get_hybrid_recommendations(user_id: int, recipe_id: int, top_n: int):
