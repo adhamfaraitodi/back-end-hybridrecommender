@@ -1,11 +1,13 @@
 # app/main.py
 from fastapi import FastAPI, HTTPException, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
 from sqlalchemy.orm import Session
 import pandas as pd
 import numpy as np
 import re
+from typing import Optional
 from surprise import Dataset, Reader, SVD, accuracy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import euclidean_distances
@@ -16,6 +18,14 @@ import uvicorn
 from .database import SessionLocal, Recipe, UserRecipe
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # React app URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Dependency to get the session
 def get_db():
@@ -30,8 +40,8 @@ class RecipeModel(BaseModel):
     recipe_id: int
     recipe_name: str
     image_url: str
-    ingredients: str
-    cooking_directions: str
+    ingredients: Optional[str] = None
+    cooking_directions: Optional[str] = None
 
 # Load and preprocess data from database
 def load_data(db: Session):
