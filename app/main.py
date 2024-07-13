@@ -17,6 +17,7 @@ import numpy as np
 import re
 import secrets
 import uvicorn
+import random
 
 # Importing SessionLocal from database.py
 from .database import SessionLocal, Recipe, UserRecipe, User
@@ -217,10 +218,25 @@ def get_recipe(recipe_id: int, db: Session = Depends(get_db)):
         cooking_directions=recipe.cooking_directions
     )
 
+@app.get("/random/", response_model=List[RecipeModel])
+def get_random_recipes(db: Session = Depends(get_db)):
+    recipes = db.query(Recipe).all()
+    random_recipes = random.sample(recipes, min(len(recipes), 8))
+    return [
+        RecipeModel(
+            recipe_id=recipe.recipe_id,
+            recipe_name=recipe.recipe_name,
+            image_url=recipe.image_url,
+            ingredients=recipe.ingredients,
+            cooking_directions=recipe.cooking_directions
+        )
+        for recipe in random_recipes
+    ]
+
 @app.get("/recommendations/", response_model=List[RecipeModel])
 async def get_hybrid_recommendations(recipe_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     user_id = current_user.user_id
-    top_n = 7  # Fixed top_n value
+    top_n = 8
 
     content_based_recommendations = set(get_content_based_recommendations(recipe_id, top_n))
     collaborative_filtering_predictions = get_collaborative_filtering_recommendations(user_id, top_n)
